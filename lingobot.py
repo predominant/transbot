@@ -1,7 +1,7 @@
 #!/usr/bin/python
 
 ######################################################################
-#	Name: lingobot
+#	Name: botling
 #	Author: John McLean
 #	
 #	This program connects to user-designated irc channels and translate
