@@ -15,7 +15,7 @@
 
 import irclib, urllib2, urllib, re
 
-irclib.DEBUG = False
+irclib.DEBUG = True
 
 
 
@@ -199,3 +199,5 @@ for channel in channels:
 
 #jump into infinite loop
 irc.process_forever()
+
+print "hi", "howdy"
