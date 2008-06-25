@@ -13,9 +13,6 @@
 #(/msg lingobot <channel> <language> (en, es, fr, ru, zh, etc.))
 ######################################################################
 
-
-
-
 import irclib, urllib2, urllib, re
 
 irclib.DEBUG = True

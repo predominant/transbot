@@ -1,5 +1,3 @@
-
-
 Name: lingobot
 Author: John McLean
 Purpose: To interact between irc channel using different language and translate between them.
