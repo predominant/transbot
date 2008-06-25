@@ -15,7 +15,9 @@
 
 import irclib, urllib2, urllib, re
 
-irclib.DEBUG = True
+irclib.DEBUG = False
+
+
 
 #connection info and default values
 network = 'irc.freenode.net'
