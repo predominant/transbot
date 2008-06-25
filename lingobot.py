@@ -18,7 +18,6 @@ import irclib, urllib2, urllib, re
 irclib.DEBUG = True
 
 
-
 #connection info and default values
 network = 'irc.freenode.net'
 port = 6667
@@ -199,5 +198,3 @@ for channel in channels:
 
 #jump into infinite loop
 irc.process_forever()
-
-print "hi", "howdy"
