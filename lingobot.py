@@ -1,11 +1,7 @@
 #!/usr/bin/python
 
 ######################################################################
-<<<<<<< HEAD:lingobot.py
 #	Name: lingobot
-=======
-#	Name: botling
->>>>>>> bcfe1565d39088653bc0048d7f632654c0891cea:lingobot.py
 #	Author: John McLean
 #	
 #	This program connects to user-designated irc channels and translate
@@ -17,20 +13,13 @@
 #(/msg lingobot <channel> <language> (en, es, fr, ru, zh, etc.))
 ######################################################################
 
-<<<<<<< HEAD:lingobot.py
 
 
 
-=======
->>>>>>> bcfe1565d39088653bc0048d7f632654c0891cea:lingobot.py
 import irclib, urllib2, urllib, re
 
 irclib.DEBUG = True
 
-<<<<<<< HEAD:lingobot.py
-=======
-
->>>>>>> bcfe1565d39088653bc0048d7f632654c0891cea:lingobot.py
 #connection info and default values
 network = 'irc.freenode.net'
 port = 6667
@@ -41,11 +30,8 @@ channels = prompt.split( ", " )
 nick = 'lingobot'
 name = 'Lingobot Test'
 
-<<<<<<< HEAD:lingobot.py
 
 #Handles the actual translation of the message
-=======
->>>>>>> bcfe1565d39088653bc0048d7f632654c0891cea:lingobot.py
 def translator(source_lang, target_lang, message, name, channel):
 	url = 'http://ajax.googleapis.com/ajax/services/language/translate?v=1.0&q=' + urllib2.quote(message) + '&langpair=' + source_lang + '%7C' + target_lang
 	urlRetVal = urllib2.urlopen(url)
@@ -53,10 +39,7 @@ def translator(source_lang, target_lang, message, name, channel):
 		line = line.replace('{"responseData": {"translatedText":"', '');line = line.replace('"}, "responseDetails": null, "responseStatus": 200}', '')
 		return line
 
-<<<<<<< HEAD:lingobot.py
 
-=======
->>>>>>> bcfe1565d39088653bc0048d7f632654c0891cea:lingobot.py
 #Generic echo handler (space added, then with no space), used to ouput initial info from server
 def handleEcho ( connection, event ):
 	print
@@ -64,7 +47,6 @@ def handleEcho ( connection, event ):
 def handleNoSpace ( connection, event ):
 	print " ".join ( event.arguments() )
 
-<<<<<<< HEAD:lingobot.py
 
 #handle private notices
 def handlePrivNotice ( connection, event ):
@@ -105,8 +87,6 @@ def handlePubMessage ( connection, event ):
 			server.privmsg(channel, name +  "> " + line)
 
 
-=======
->>>>>>> bcfe1565d39088653bc0048d7f632654c0891cea:lingobot.py
 #handles topic changes
 def handleTopic ( connection, event ):
 	name = event.source().split ( "!" ) [ 0 ]
@@ -119,11 +99,8 @@ def handleTopic ( connection, event ):
 			target_lang = channel_languages[channel]
 			translation = translator(source_lang, target_lang, "has set mode:" + message, name, channel)
 			server.privmsg ( channel, name + " " + translation )
-<<<<<<< HEAD:lingobot.py
 
 
-=======
->>>>>>> bcfe1565d39088653bc0048d7f632654c0891cea:lingobot.py
 #handles mode changes
 def handleMode ( connection, event ):
 	name = event.source().split ( "!" ) [ 0 ]
@@ -141,10 +118,7 @@ def handleMode ( connection, event ):
 				name2 = events.arguments() [ 1 ]
 				server.privmsg ( channel, name + " " + translation.split( "has set " ) [ 0 ] + name2 + "'s" + translation.split( "has set" ) [ 1 ] )
 
-<<<<<<< HEAD:lingobot.py
 
-=======
->>>>>>> bcfe1565d39088653bc0048d7f632654c0891cea:lingobot.py
 #handles Parts
 def handlePart ( connection, event ):
 	name = event.source().split ( "!" ) [ 0 ]
@@ -156,11 +130,8 @@ def handlePart ( connection, event ):
 			target_lang = channel_languages[channel]
 			translation = translator(source_lang, target_lang, "has quit", name, channel)
 			server.privmsg ( channel, name + " " + translation + " " + event.target() )
-<<<<<<< HEAD:lingobot.py
 
 
-=======
->>>>>>> bcfe1565d39088653bc0048d7f632654c0891cea:lingobot.py
 #handles quits
 def handleQuit ( connection, event ):
 	name = event.source().split ( "!" ) [ 0 ]
@@ -172,10 +143,7 @@ def handleQuit ( connection, event ):
 			target_lang = channel_languages[channel]
 			translation = translator(source_lang, target_lang, "has disconnected:", name, channel)
 			server.privmsg ( channel, name + " " + translation + " " + event.target() )
-<<<<<<< HEAD:lingobot.py
 
-=======
->>>>>>> bcfe1565d39088653bc0048d7f632654c0891cea:lingobot.py
 	
 #handles kicks
 def handleKick ( connection, event ):
@@ -189,17 +157,8 @@ def handleKick ( connection, event ):
 			target_lang = channel_languages[channel]
 			translation = translator(source_lang, target_lang, "has been kicked by", name, channel)
 			server.privmsg ( channel, name2 + " " + translation + " " + name)
-<<<<<<< HEAD:lingobot.py
 
 
-=======
-#handle private notices
-def handlePrivNotice ( connection, event ):
-	if event.source():
-		print ":: " + event.source() + " ->" + event.arguments() [ 0]
-	else:
-		print event.arguments() [ 0 ]
->>>>>>> bcfe1565d39088653bc0048d7f632654c0891cea:lingobot.py
 #handle channel joins
 def handleJoin ( connection, event ):
 	#the source needs to be split into just the name
@@ -217,37 +176,6 @@ def handleJoin ( connection, event ):
 			server.privmsg ( channel, name + ' ' + translation + ' ' + event.target() )
 
 
-<<<<<<< HEAD:lingobot.py
-=======
-#auto-joins to invited channels
-def handleInvite ( connection, event ):
-	channels.append ( event.arguments() [ 0 ] )
-	connection.join ( event.arguments() [ 0 ] ) 
-
-
-#handles private messages
-def handlePrivMessage (  connection, event ):
-	name = event.source().split ( '!' ) [ 0 ]
-	command = event.arguments() [ 0 ].split()
-	try:
-		if command[1] in supported_languages:
-			 channel_languages [ command [ 0 ] ] = command [ 1 ]
-	except: 
-		server.privmsg ( name , command + ": unrecognized command" )
-
-#handles public messages
-def handlePubMessage ( connection, event ):
-	source_lang = channel_languages [ event.target() ] 
-	message = event.arguments() [ 0 ]
-	name = event.source().split( '!' ) [ 0 ] 
-	for channel in channels:
-		if channel_languages[channel] == source_lang:
-			pass
-		else:
-			target_lang = channel_languages[channel]
-			line = translator(source_lang, target_lang, message, name, channel)
-			server.privmsg(channel, name +  "> " + line)
->>>>>>> bcfe1565d39088653bc0048d7f632654c0891cea:lingobot.py
 #create an irc object
 irc = irclib.IRC()
 
