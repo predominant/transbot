@@ -1,5 +1,8 @@
+<<<<<<< HEAD:README.txt
 
 
+=======
+>>>>>>> bcfe1565d39088653bc0048d7f632654c0891cea:README.txt
 Name: lingobot
 Author: John McLean
 Purpose: To interact between irc channel using different language and translate between them.
@@ -28,3 +31,7 @@ spanish - es
 slovenian - sl
 swedish - sv
 turkish - tr
+<<<<<<< HEAD:README.txt
+=======
+
+>>>>>>> bcfe1565d39088653bc0048d7f632654c0891cea:README.txt
