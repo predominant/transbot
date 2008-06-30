@@ -1,6 +1,6 @@
 
 ######################################################################
-#	Name: lingobot
+#	Name: transbot
 #	Author: John McLean
 #	
 #	This program connects to user-designated irc channels and translate
@@ -9,24 +9,29 @@
 #This works with multiple channels and multiple users.  Users must designate 
 #the channel's language, either by placing channel:language pairs into the 
 #dictionary below or messaging the bot designating language 
-#(/msg lingobot <channel> <language> (en, es, fr, ru, zh, etc.))
+#(/msg transbot <channel> <language> (en, es, fr, ru, zh, etc.))
 ######################################################################
 
 
 
 
-import irclib, urllib2, urllib, re
+import irclib, urllib2, urllib, re, sys
 
-irclib.DEBUG = True
+irclib.DEBUG = False
 
 #connection info and default values
 network = 'irc.freenode.net'
 port = 6667
 channel_languages = {"#fedora-meeting":"en", "#fedora-meeting-en":"en", "#fedora-meeting-es":"es", "#fedora-meeting-pt":"pt", "#fedora-meeting-fr":"fr", "#fedora-meeting-ru":"ru", "#fedora-meeting-zh":"zh"}
 supported_languages = [ 'de' , 'zh' , 'en' , 'es' , 'fr' , 'ru' , 'pt' , 'ga' , 'hi' , 'he' , 'it' , 'ko' , 'la' , 'ro' , 'sr' , 'sl' , 'sv' , 'tr' , 'ar' , 'ja' ]
-prompt = raw_input("Choose your channels (separate by ', '): ")
-channels = prompt.split( ", " )
-nick = 'lingobot'
+channels = []
+for channel in sys.argv:
+	channels.append( "#" + str ( channel ) )
+del channels [ 0 ]
+print channels
+for channel in channels:
+	channel_languages [ channel ] = "en"
+nick = 'transbot'
 name = 'Lingobot Test'
 
 
@@ -74,14 +79,18 @@ def handlePrivMessage (  connection, event ):
 
 #handles public messages
 def handlePubMessage ( connection, event ):
+	seeker = re.compile ( '^\.[a-zA-Z]{2}$' )
 	source_lang = channel_languages [ event.target() ] 
 	message = event.arguments() [ 0 ]
+	if bool ( seeker.search ( message ) ):
+		message = message.strip ( '.' )
+		channel_languages [ event.target() ] = message; return
 	name = event.source().split( '!' ) [ 0 ] 
 	for channel in channels:
-		if channel_languages[channel] == source_lang:
+		if channel_languages [ channel ] == source_lang:
 			pass
 		else:
-			target_lang = channel_languages[channel]
+			target_lang = channel_languages [ channel ]
 			line = translator(source_lang, target_lang, message, name, channel)
 			server.privmsg(channel, name +  "> " + line)
 
@@ -106,10 +115,10 @@ def handleMode ( connection, event ):
 	source_lang = channel_languages [ event.target() ] 
 	message = event.arguments() [ 0 ] 
 	for channel in channels:
-		if channel_languages[channel] == source_lang:
+		if channel_languages [ channel ] == source_lang:
 			pass
 		else:
-			target_lang = channel_languages[channel]
+			target_lang = channel_languages [ channel ]
 			translation = translator(source_lang, target_lang, "has set mode:" + message, name, channel)
 			if len ( event.arguments() ) < 2:
 				server.privmsg ( channel, name + " " + translation)
@@ -136,10 +145,10 @@ def handleQuit ( connection, event ):
 	name = event.source().split ( "!" ) [ 0 ]
 	source_lang = channel_languages [ event.target() ] 
 	for channel in channels:
-		if channel_languages[channel] == source_lang:
+		if channel_languages [ channel ] == source_lang:
 			pass
 		else:
-			target_lang = channel_languages[channel]
+			target_lang = channel_languages [ channel ]
 			translation = translator(source_lang, target_lang, "has disconnected:", name, channel)
 			server.privmsg ( channel, name + " " + translation + " " + event.target() )
 
@@ -163,7 +172,7 @@ def handleJoin ( connection, event ):
 	#the source needs to be split into just the name
 	#it comes in the format nickname!user@host
 	name = event.source().split ( "!" ) [ 0 ] 
-	if name == "lingobot":
+	if name == "transbot":
 		return
 	source_lang = channel_languages [ event.target() ] 
 	for channel in channels:
@@ -213,7 +222,5 @@ server = irc.server()
 server.connect ( network, port, nick, ircname = name ) 
 for channel in channels:
 	server.join ( channel )
-
-#jump into infinite loop
+#jumps into infinite loop
 irc.process_forever()
-
