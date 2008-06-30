@@ -1,4 +1,4 @@
-
+#!/usr/bin/python
 ######################################################################
 #	Name: transbot
 #	Author: John McLean
@@ -17,7 +17,7 @@
 
 import irclib, urllib2, urllib, re, sys
 
-irclib.DEBUG = False
+irclib.DEBUG = True
 
 #connection info and default values
 network = 'irc.freenode.net'
@@ -143,14 +143,11 @@ def handlePart ( connection, event ):
 #handles quits
 def handleQuit ( connection, event ):
 	name = event.source().split ( "!" ) [ 0 ]
-	source_lang = channel_languages [ event.target() ] 
+	print event.target()
 	for channel in channels:
-		if channel_languages [ channel ] == source_lang:
-			pass
-		else:
-			target_lang = channel_languages [ channel ]
-			translation = translator(source_lang, target_lang, "has disconnected:", name, channel)
-			server.privmsg ( channel, name + " " + translation + " " + event.target() )
+		target_lang = channel_languages [ channel ]
+		translation = translator( 'en' , target_lang, "has disconnected", name, channel)
+		server.privmsg ( channel, name + " " + translation )
 
 	
 #handles kicks
