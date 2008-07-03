@@ -15,11 +15,11 @@ URL:	http://fedoraproject.org/wiki/User:Mcleanj/
 Source0:	http://fedorahosted.org/transbot/browser/transbot-0.1.tar.gz
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-buildroot
 BuildArch:	noarch
-BuildRequires:	python
+BuildRequires:	python, python-devel
 Requires:	python-irclib
 
 %description
-An irc bot designed to translate between different languages on separate irc channels.  Works for public/channel messages, topic changes, mode changes, and user join/quit instances.
+An irc bot designed to translate between languages on separate irc channels. 
 
 %prep
 %setup -q
@@ -40,5 +40,7 @@ rm -rf %{buildroot}
 %doc README LICENSE
 %dir %{python_sitelib}/trans
 %{python_sitelib}/trans/*.pyo
+%config(noreplace) %{_sysconfdir}/transbot.conf
 
 %changelog
+
