@@ -8,7 +8,7 @@ Summary: Small irc bot designed to translate between languages in irc channels
 Group: Development/Libraries
 License: GPLv2+
 URL:	http://git.fedorahosted.org/git/lingobot.git
-Source0:	http://fedorahosted.org/lingobot/browser/%{name}-%{version}.tar.gz
+Source0:	http://jesusfreak91.googlepages.com/%{name}-%{version}.tar.gz
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-buildroot
 BuildArch:	noarch
 BuildRequires:	python, python-devel
