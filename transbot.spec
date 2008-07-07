@@ -1,18 +1,14 @@
-%define name transbot
-%define version 0.1
-%define unmangled_version 0.1
-%define release 1
 %{!?python_sitelib: %define python_sitelib %(%{__python} -c "from distutils.sysconfig import get_python_lib; print get_python_lib()")}
 
 
-Name: %{name}
-Version: %{version}
-Release: %{release}
+Name: transbot
+Version: 0.1
+Release: 1%{?dist}
 Summary: Small irc bot designed to translate between languages in irc channels
 Group: Development/Libraries
 License: GPLv2+
-URL:	http://fedoraproject.org/wiki/User:Mcleanj/
-Source0:	http://fedorahosted.org/transbot/browser/transbot-0.1.tar.gz
+URL:	http://git.fedorahosted.org/git/lingobot.git
+Source0:	http://fedorahosted.org/lingobot/browser/%{name}-%{version}.tar.gz
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-buildroot
 BuildArch:	noarch
 BuildRequires:	python, python-devel
@@ -43,4 +39,5 @@ rm -rf %{buildroot}
 %config(noreplace) %{_sysconfdir}/transbot.conf
 
 %changelog
-
+*Sat Jul 05 2008 John McLean <jesusfreak91@gmail.com>
+-Fixed the problems in the spec file
