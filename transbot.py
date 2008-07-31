@@ -33,7 +33,7 @@ if conf_size is not 0:
 	conf_file = open ( '/etc/transbot.conf' )
 	network = conf_file.readline().split ( ':' ) [ 1 ]
 	network = network.strip ()
-	channel_list = conf_file.readline().split ( ':' ) [ 1 ]
+	channel_list = conf_file.readline().split ( ':' ).lower() [ 1 ]
 	chans = channel_list.split ( ',' )
 	for channel in chans:
 		channel_languages [ channel.split() [ 0 ] ] = channel.split() [ 1 ]
@@ -64,7 +64,10 @@ def translator(source_lang, target_lang, message, name, channel):
 		if match.group(1): # Numeric character reference
 			return unichr(int(match.group(2)))
 		else:
-			return unichr(name2codepoint[match.group(3)])
+			return unichr(name2codepoint[match.group
+	#line = str ( unicodedata.normalize('NFKD', unicode(line)).encode('UTF-8') ).lower()
+	line = str ( unicodedata.normalize('NFKD', unicode(line)).encode('ASCII', 'ignore') ).lower()
+
 	print _entity_re.sub (_repl_func, line ) 
 	return _entity_re.sub ( _repl_func, line )
 
