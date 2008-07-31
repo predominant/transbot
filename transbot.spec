@@ -3,7 +3,7 @@
 
 Name: transbot
 Version: 0.1
-Release: 1%{?dist}
+Release: 2%{?dist}
 Summary: Small irc bot designed to translate between languages in irc channels
 Group: Development/Libraries
 License: GPLv2+
@@ -25,19 +25,22 @@ python setup.py build
 
 %install
 rm -rf %{buildroot}
-python setup.py install --root=%{buildroot} --record=installed_files 
-sed -e 's/\.[0-9]$/&\*/' <installed_files >installed_files2
+python setup.py install --root=%{buildroot} 
 
 %clean
 rm -rf %{buildroot}
 
-%files -f installed_files2
+%files 
 %defattr(-,root,root)
 %doc README LICENSE
-%dir %{python_sitelib}/trans
-%{python_sitelib}/trans/*.pyo
+%{_bindir}/*
+%{_mandir}/*
+%{python_sitelib}/*
 %config(noreplace) %{_sysconfdir}/transbot.conf
 
 %changelog
-*Sat Jul 05 2008 John McLean <jesusfreak91@gmail.com>
--Fixed the problems in the spec file
+* Thu Jul 31 2008 John McLean <jesusfreak91@gmail.com> - 0.1-2
+-fixed two bugs in transbot.py
+
+*Sat Jul 05 2008 John McLean <jesusfreak91@gmail.com> - 0.1-1
+-initial spec
