@@ -1,3 +1,4 @@
+#!/usr/bin/python
 ######################################################################
 #	Name: transbot
 #	Author: John McLean
@@ -14,7 +15,7 @@
 
 
 
-import irclib, urllib2, urllib, re, sys, os
+import irclib, urllib2, urllib, re, sys, os, codecs
 from htmlentitydefs import name2codepoint
 
 irclib.DEBUG = True
@@ -58,16 +59,14 @@ def translator(source_lang, target_lang, message, name, channel):
 	urlRetVal = urllib2.urlopen(url)
 	for line in urlRetVal:
 		line = line.replace('{"responseData": {"translatedText":"', '');line = line.replace('"}, "responseDetails": null, "responseStatus": 200}', '')
-	line = eval ( 'u' + "'" + line + "'" )
+	line = unicode ( line, "utf-8" )
+	line = line.encode ( "utf-8 " )
 	_entity_re = re.compile(r'&(?:(#)(\d+)|([^;]+));') 
 	def _repl_func(match):
 		if match.group(1): # Numeric character reference
 			return unichr(int(match.group(2)))
 		else:
-			return unichr(name2codepoint[match.group
-	#line = str ( unicodedata.normalize('NFKD', unicode(line)).encode('UTF-8') ).lower()
-	line = str ( unicodedata.normalize('NFKD', unicode(line)).encode('ASCII', 'ignore') ).lower()
-
+			return unichr(name2codepoint[match.group])
 	print _entity_re.sub (_repl_func, line ) 
 	return _entity_re.sub ( _repl_func, line )
 

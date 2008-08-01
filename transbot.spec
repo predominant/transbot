@@ -3,7 +3,7 @@
 
 Name: transbot
 Version: 0.1
-Release: 2%{?dist}
+Release: 3%{?dist}
 Summary: Small irc bot designed to translate between languages in irc channels
 Group: Development/Libraries
 License: GPLv2+
@@ -16,6 +16,11 @@ Requires:	python-irclib
 
 %description
 An irc bot designed to translate between languages on separate irc channels. 
+It takes input from one channel, translates it, and outputs the translated 
+text into other channels in that channel's specified language.  
+Handles public messages, topic changes, mode changes, join/leave events, 
+and auto-joins to invited channels.  Supports utf-8 characters 
+and multiple languages.  
 
 %prep
 %setup -q
@@ -39,6 +44,10 @@ rm -rf %{buildroot}
 %config(noreplace) %{_sysconfdir}/transbot.conf
 
 %changelog
+* Fri Aug 01 2008 John McLean <jesusfreak91@gmail.com> - 0.1-3
+-added support for utf-8 characters
+-updated spec %%description
+
 * Thu Jul 31 2008 John McLean <jesusfreak91@gmail.com> - 0.1-2
 -fixed two bugs in transbot.py
 
