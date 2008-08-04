@@ -48,6 +48,7 @@ rm -rf %{buildroot}
 -fixed licensing issues
 -fixed rpmlint issues
 -fixed %%defattr
+-modified setup.py
 
 * Fri Aug 01 2008 John McLean <jesusfreak91@gmail.com> - 0.1-3
 -added support for utf-8 characters
