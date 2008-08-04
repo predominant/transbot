@@ -3,10 +3,10 @@
 
 Name: transbot
 Version: 0.1
-Release: 3%{?dist}
+Release: 4%{?dist}
 Summary: Small irc bot designed to translate between languages in irc channels
 Group: Development/Libraries
-License: GPLv2+
+License: GPL+
 URL:	http://git.fedorahosted.org/git/lingobot.git
 Source0:	http://jesusfreak91.googlepages.com/%{name}-%{version}.tar.gz
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-buildroot
@@ -36,14 +36,19 @@ python setup.py install --root=%{buildroot}
 rm -rf %{buildroot}
 
 %files 
-%defattr(-,root,root)
+%defattr(-,root,root,-)
 %doc README LICENSE
 %{_bindir}/*
-%{_mandir}/*
+%{_mandir}/man1/*
 %{python_sitelib}/*
 %config(noreplace) %{_sysconfdir}/transbot.conf
 
 %changelog
+* Mon Aug 04 2008 John McLean <jesusfreak91@gmail.com> - 0.1-4
+-fixed licensing issues
+-fixed rpmlint issues
+-fixed %%defattr
+
 * Fri Aug 01 2008 John McLean <jesusfreak91@gmail.com> - 0.1-3
 -added support for utf-8 characters
 -updated spec %%description

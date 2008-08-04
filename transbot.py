@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python
 ######################################################################
 #	Name: transbot
 #	Author: John McLean
@@ -59,6 +59,7 @@ def translator(source_lang, target_lang, message, name, channel):
 	urlRetVal = urllib2.urlopen(url)
 	for line in urlRetVal:
 		line = line.replace('{"responseData": {"translatedText":"', '');line = line.replace('"}, "responseDetails": null, "responseStatus": 200}', '')
+	#encode in utf-8 rather than ascii
 	line = unicode ( line, "utf-8" )
 	line = line.encode ( "utf-8 " )
 	_entity_re = re.compile(r'&(?:(#)(\d+)|([^;]+));') 
