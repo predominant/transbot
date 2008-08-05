@@ -2,8 +2,8 @@
 
 
 Name: transbot
-Version: 0.1
-Release: 4%{?dist}
+Version: 0.2
+Release: 1%{?dist}
 Summary: Small irc bot designed to translate between languages in irc channels
 Group: Development/Libraries
 License: GPL+
@@ -44,6 +44,11 @@ rm -rf %{buildroot}
 %config(noreplace) %{_sysconfdir}/transbot.conf
 
 %changelog
+* Tue Aug 04 2008 John McLean <jesusfreak91@gmail.com> - 0.2-1
+-Fixed a small typo in transbot
+-Bumped the version -- this should have been done a few days ago
+
+
 * Mon Aug 04 2008 John McLean <jesusfreak91@gmail.com> - 0.1-4
 -fixed licensing issues
 -fixed rpmlint issues

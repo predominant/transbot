@@ -34,7 +34,7 @@ if conf_size is not 0:
 	conf_file = open ( '/etc/transbot.conf' )
 	network = conf_file.readline().split ( ':' ) [ 1 ]
 	network = network.strip ()
-	channel_list = conf_file.readline().split ( ':' ).lower() [ 1 ]
+	channel_list = conf_file.readline().split ( ':' ) [ 1 ].lower()
 	chans = channel_list.split ( ',' )
 	for channel in chans:
 		channel_languages [ channel.split() [ 0 ] ] = channel.split() [ 1 ]
