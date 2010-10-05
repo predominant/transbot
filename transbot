@@ -23,15 +23,28 @@ irclib.DEBUG = True
 #connection info and default values
 network = 'irc.freenode.net'
 port = 6667
-channel_languages = {"#fedora-meeting":"en", "#fedora-meeting-en":"en", "#fedora-meeting-es":"es", "#fedora-meeting-pt":"pt", "#fedora-meeting-fr":"fr", "#fedora-meeting-ru":"ru", "#fedora-meeting-zh":"zh"}
-supported_languages = [ 'de' , 'zh' , 'en' , 'es' , 'fr' , 'ru' , 'pt' , 'ga' , 'hi' , 'he' , 'it' , 'ko' , 'la' , 'ro' , 'sr' , 'sl' , 'sv' , 'tr' , 'ar' , 'ja' ]
+channel_languages = {}
+
+# supported_languages
+# 'de' , 'zh' , 'en' , 'es' , 'fr' , 'ru' , 'pt' , 'ga' , 'hi' , 'he' , 'it' , 
+# 'ko' , 'la' , 'ro' , 'sr' , 'sl' , 'sv' , 'tr' , 'ar' , 'ja' 
+
 channels = []
+
+# FORMAT OF TRANSBOT.CONF
+#
+# network: <network-name>
+# channels: #<channel-name> <two char language identifier>, etc...
+# port: <port #>
+
 try:
-	conf_size = os.path.getsize ( '/etc/transbot.conf' )
+	conf_size = os.path.getsize ( 'transbot.conf' )
 except:
 	conf_size = 0
+    
 if conf_size is not 0:
-	conf_file = open ( '/etc/transbot.conf' )
+	conf_file = open ( 'transbot.conf' )
+    # grab the network name
 	network = conf_file.readline().split ( ':' ) [ 1 ]
 	network = network.strip ()
 	channel_list = conf_file.readline().split ( ':' ) [ 1 ].lower()
@@ -55,7 +68,7 @@ name = 'transbot Test'
 
 #Handles the actual translation of the message
 def translator(source_lang, target_lang, message, name, channel):
-	url = 'http://ajax.googleapis.com/ajax/services/language/translate?v=1.0&q=' + urllib2.quote(message) + '&langpair=' + source_lang + '%7C' + target_lang
+	url = 'http://ajax.googleapis.com/ajax/services/language/translate?v=1.0&q=' + urllib2.quote(message) + '&langpair=' + '%7C' + target_lang
 	urlRetVal = urllib2.urlopen(url)
 	for line in urlRetVal:
 		line = line.replace('{"responseData": {"translatedText":"', '');line = line.replace('"}, "responseDetails": null, "responseStatus": 200}', '')
@@ -111,6 +124,7 @@ def handlePubMessage ( connection, event ):
 	name = event.source().split( '!' ) [ 0 ] 
 	if name.strip ( '0123456789' ) == 'transbot':
 		return
+    # this seems to be a command to set the language of a channel    
 	if bool ( seeker.search ( message ) ):
 		message = message.strip ( '.' )
 		channel_languages [ str ( event.target() ).lower()  ] = message; return
