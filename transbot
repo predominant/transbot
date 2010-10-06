@@ -29,8 +29,6 @@ channel_languages = {}
 # 'de' , 'zh' , 'en' , 'es' , 'fr' , 'ru' , 'pt' , 'ga' , 'hi' , 'he' , 'it' , 
 # 'ko' , 'la' , 'ro' , 'sr' , 'sl' , 'sv' , 'tr' , 'ar' , 'ja' 
 
-channels = []
-
 # FORMAT OF TRANSBOT.CONF
 #
 # network: <network-name>
@@ -41,7 +39,6 @@ try:
 	conf_size = os.path.getsize ( 'transbot.conf' )
 except:
 	conf_size = 0
-    
 if conf_size is not 0:
 	conf_file = open ( 'transbot.conf' )
     # grab the network name
@@ -51,17 +48,13 @@ if conf_size is not 0:
 	chans = channel_list.split ( ',' )
 	for channel in chans:
 		channel_languages [ channel.split() [ 0 ] ] = channel.split() [ 1 ]
-		channels.append ( channel.split() [ 0 ] )
 	port = int ( conf_file.readline().split ( ':' ) [ 1 ] )
 	conf_file.close()
 
+#hanndles command args
 for channel in sys.argv [ 1: ]:
-	channels.append ( "#" + str ( channel ) )
-for channel in channels:
-	if channel in channel_languages:
-		pass
-	else:
-		channel_languages [ channel ] = "en"
+	channel_languages ['#'+channel ] = "en"
+
 nick = 'transbot0'
 name = 'transbot Test'
 
@@ -103,7 +96,6 @@ def handlePrivNotice ( connection, event ):
 
 #auto-joins to invited channels
 def handleInvite ( connection, event ):
-	channels.append ( event.arguments() [ 0 ] )
 	channel_languages [ str ( event.arguments() [ 0 ]  ).lower() ] = '.en'
 	connection.join ( event.arguments() [ 0 ] ) 
 
@@ -128,7 +120,7 @@ def handlePubMessage ( connection, event ):
 	if bool ( seeker.search ( message ) ):
 		message = message.strip ( '.' )
 		channel_languages [ str ( event.target() ).lower()  ] = message; return
-	for channel in channels:
+	for channel in channel_languages.keys():
 		if channel_languages [ channel ] == source_lang:
 			pass
 		else:
@@ -142,7 +134,7 @@ def handleTopic ( connection, event ):
 	name = event.source().split ( "!" ) [ 0 ]
 	source_lang = channel_languages [ str ( event.target() ).lower()  ] 
 	message = event.arguments() [ 0 ] 
-	for channel in channels:
+	for channel in channel_languages.keys():
 		if channel_languages[channel] == source_lang:
 			pass
 		else:
@@ -156,7 +148,7 @@ def handleMode ( connection, event ):
 	name = event.source().split ( "!" ) [ 0 ]
 	source_lang = channel_languages [ str ( event.target() ).lower()  ] 
 	message = event.arguments() [ 0 ] 
-	for channel in channels:
+	for channel in channel_languages.keys():
 		if channel_languages [ channel ] == source_lang:
 			pass
 		else:
@@ -173,7 +165,7 @@ def handleMode ( connection, event ):
 def handlePart ( connection, event ):
 	name = event.source().split ( "!" ) [ 0 ]
 	source_lang = channel_languages [ str ( event.target() ).lower()  ] 
-	for channel in channels:
+	for channel in channel_languages.keys():
 		if channel_languages[channel] == source_lang:
 			pass
 		else:
@@ -185,9 +177,9 @@ def handlePart ( connection, event ):
 #handles quits
 def handleQuit ( connection, event ):
 	name = event.source().split ( "!" ) [ 0 ]
-	for channel in channels:
+	for channel in channel_languages.keys():
 		target_lang = channel_languages [ channel ]
-		translation = translator( 'en' , target_lang, "has disconnected", name, channel)
+		translation = translator( target_lang, "has disconnected", name, channel)
 		server.privmsg ( channel, name + " " + translation )
 	
 	
@@ -196,7 +188,7 @@ def handleKick ( connection, event ):
 	name = event.source().split ( "!" ) [ 0 ]
 	name2 = event.arguments() [ 0 ]
 	source_lang = channel_languages [ str ( event.target() ).lower()  ] 
-	for channel in channels:
+	for channel in channel_languages.keys():
 		if channel_languages[channel] == source_lang:
 			pass
 		else:
@@ -213,7 +205,7 @@ def handleJoin ( connection, event ):
 	if name.strip ( '0123456789' ) == "transbot":
 		return
 	source_lang = channel_languages [ str ( event.target() ).lower()  ] 
-	for channel in channels:
+	for channel in channel_lanagues.keys():
 		if channel_languages [ channel ] == source_lang:
 			pass
 		else:
@@ -267,8 +259,8 @@ irc.add_global_handler ( 'nicknameinuse', handleNoNick ) #handles pre-registered
 def server_object ( network, nick, name, port, ircname ):
 	server = irc.server()
 	server.connect ( network, port, nick, ircname )
-	for channel in channels:
-		server.join ( channel )
+	for channel in channel_languages.keys():
+		server.join ( channel)
 	return server
 
 server = server_object ( network, nick, name, port, ircname = name )
