@@ -57,25 +57,30 @@ for channel in sys.argv [ 1: ]:
 
 nick = 'transbot0'
 name = 'transbot Test'
-
+quote_string_re = re.compile(r'(".*?")')
 
 #Handles the actual translation of the message
 def translator(target_lang, message, name, channel):
-	url = 'http://ajax.googleapis.com/ajax/services/language/translate?v=1.0&q=' + urllib2.quote(message) + '&langpair=' + '%7C' + target_lang
-	urlRetVal = urllib2.urlopen(url)
-	for line in urlRetVal:
-		line = line.replace('{"responseData": {"translatedText":"', '');line = line.replace('"}, "responseDetails": null, "responseStatus": 200}', '')
-	#encode in utf-8 rather than ascii
-	line = unicode ( line, "utf-8" )
-	line = line.encode ( "utf-8 " )
-	_entity_re = re.compile(r'&(?:(#)(\d+)|([^;]+));') 
-	def _repl_func(match):
-		if match.group(1): # Numeric character reference
-			return unichr(int(match.group(2)))
-		else:
-			return unichr(name2codepoint[match.group])
-	print _entity_re.sub (_repl_func, line ) 
-	return _entity_re.sub ( _repl_func, line )
+    line = None
+    url = 'http://ajax.googleapis.com/ajax/services/language/translate?v=1.0&q=' + urllib2.quote(message) + '&langpair=' + '%7C' + target_lang
+    urlRetVal = urllib2.urlopen(url)
+    for x in urlRetVal:
+        line = x
+    #encode in utf-8 rather than ascii
+    line = line.replace('{"responseData": {"translatedText":', '')
+    line = quote_string_re.search(line)
+    line = line.group(1)
+    line = line.replace('\"', '')
+    line = unicode ( line, "utf-8" )
+    line = line.encode ( "utf-8 " )
+    _entity_re = re.compile(r'&(?:(#)(\d+)|([^;]+));') 
+    def _repl_func(match):
+        if match.group(1): # Numeric character reference
+            return unichr(int(match.group(2)))
+        else:
+            return unichr(name2codepoint[match.group])
+    print _entity_re.sub (_repl_func, line ) 
+    return _entity_re.sub ( _repl_func, line )
 
 
 #Generic echo handler (space added, then with no space), used to ouput initial info from server
