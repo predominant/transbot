@@ -15,7 +15,7 @@
 # test test test
 
 
-import irclib, urllib2, urllib, re, sys, os, codecs
+import irclib, urllib2, urllib, re, sys, os, codecs, getopt
 from htmlentitydefs import name2codepoint
 
 irclib.DEBUG = True
@@ -52,7 +52,12 @@ if conf_size is not 0:
 	conf_file.close()
 
 #hanndles command args
-for channel in sys.argv [ 1: ]:
+#handles help, save, remove
+optlist, args = getopt.getopt(sys.argv,"hs:r:",["help","save=","remove="])
+
+
+for arg in sys.argv [ 1: ]:
+	
 	channel_languages ['#'+channel ] = "en"
 
 nick = 'transbot0'
