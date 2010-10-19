@@ -56,12 +56,27 @@ if conf_size is not 0:
 
 #hanndles command args
 #handles help, save, remove
-optlist, args = getopt.getopt(sys.argv,"hs:r:",["help","save=","remove="])
+try:
+	opts, args = getopt.getopt(sys.argv[1:],
+				      "hs:r:",["help","save=","remove="])
+except getopt.Getopterror:
+	print "usage:"
+	System.exit(2)
 
+for opt,arg in opts:
+	if opt in ("-h","--help"):
+		print 'help message'
+		#print help message
+	elif opt in ("-s","--save"):
+		#saves a default channel
+		print 'handle saving channels'	
+	elif opt in ("-r","--remove"):
+		#removes a default channel
+		print 'handle removing default channels'
 
-for arg in sys.argv [ 1: ]:
-	
-	channel_languages ['#'+channel ] = "en"
+for arg in args:
+	arg = arg.split(':')
+	channel_languages ['#'+arg[0].lower()] = arg[1]
 
 nick = 'transbot0'
 name = 'transbot Test'
@@ -214,7 +229,7 @@ def handleJoin ( connection, event ):
 	if name.strip ( '0123456789' ) == "transbot":
 		return
 	source_lang = channel_languages [ str ( event.target() ).lower()  ] 
-	for channel in channel_lanagues.keys():
+	for channel in channel_languages.keys():
 		if channel_languages [ channel ] == source_lang:
 			pass
 		else:
