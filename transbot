@@ -16,6 +16,9 @@
 
 
 import irclib, urllib2, urllib, re, sys, os, codecs, getopt
+
+import simplejson
+
 from htmlentitydefs import name2codepoint
 
 irclib.DEBUG = True
@@ -66,15 +69,11 @@ quote_string_re = re.compile(r'(".*?")')
 
 #Handles the actual translation of the message
 def translator(target_lang, message, name, channel):
-    line = None
     url = 'http://ajax.googleapis.com/ajax/services/language/translate?v=1.0&q=' + urllib2.quote(message) + '&langpair=' + '%7C' + target_lang
     urlRetVal = urllib2.urlopen(url)
-    for x in urlRetVal:
-        line = x
+    json_obj = simplejson.load(urlRetVal)
     #encode in utf-8 rather than ascii
-    line = line.replace('{"responseData": {"translatedText":', '')
-    line = quote_string_re.search(line)
-    line = line.group(1)
+    line = json_obj['responseData'] ['translatedText']
     line = line.replace('\"', '')
     line = unicode ( line, "utf-8" )
     line = line.encode ( "utf-8 " )
