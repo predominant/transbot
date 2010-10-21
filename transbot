@@ -83,10 +83,11 @@ for arg in args:
 nick = 'transbot0'
 name = 'transbot Test'
 quote_string_re = re.compile(r'(".*?")')
+api = 'http://ajax.googleapis.com/ajax/services/language/translate?v=1.0&q='
 
 #Handles the actual translation of the message
-def translator(target_lang, message, name, channel):
-    url = 'http://ajax.googleapis.com/ajax/services/language/translate?v=1.0&q=' + urllib2.quote(message) + '&langpair=' + '%7C' + target_lang
+def translator(source_lang, target_lang, message, name, channel):
+    url =  api + urllib2.quote(message) + '&langpair=' + source_lang + '%7C' + target_lang
     urlRetVal = urllib2.urlopen(url)
     json_obj = simplejson.load(urlRetVal)
     logging.debug(json_obj)
@@ -157,7 +158,7 @@ def handlePubMessage ( connection, event ):
             pass
         else:
             target_lang = channel_languages [ channel ]
-            line = translator(target_lang, message, name, channel)
+            line = translator(source_lang, target_lang, message, name, channel)
             server.privmsg(channel, name +  "> " + line)
 
 
@@ -172,7 +173,7 @@ def handleTopic ( connection, event ):
             pass
         else:
             target_lang = channel_languages[channel]
-            translation = translator(target_lang, "has set mode:" + message, name, channel)
+            translation = translator(source_lang, target_lang, "has set mode:" + message, name, channel)
             server.privmsg ( channel, name + " " + translation )
 
 
@@ -187,7 +188,7 @@ def handleMode ( connection, event ):
             pass
         else:
             target_lang = channel_languages [ channel ]
-            translation = translator(target_lang, "has set mode:" + message, name, channel)
+            translation = translator(source_lang, target_lang, "has set mode:" + message, name, channel)
             if len ( event.arguments() ) < 2:
                 server.privmsg ( channel, name + " " + translation)
             else:
@@ -204,7 +205,7 @@ def handlePart ( connection, event ):
             pass
         else:
             target_lang = channel_languages[channel]
-            translation = translator(target_lang, "has quit", name, channel)
+            translation = translator(source_lang, target_lang, "has quit", name, channel)
             logging.info(translation)
             server.privmsg ( channel, name + " " + translation + " " + str ( event.target() ).lower()  )
 
@@ -214,7 +215,7 @@ def handleQuit ( connection, event ):
     name = event.source().split ( "!" ) [ 0 ]
     for channel in channel_languages.keys():
         target_lang = channel_languages [ channel ]
-        translation = translator( target_lang, "has disconnected", name, channel)
+        translation = translator(source_lang, target_lang, "has disconnected", name, channel)
         logging.info(translation)
         server.privmsg ( channel, name + " " + translation )
 
@@ -229,7 +230,7 @@ def handleKick ( connection, event ):
             pass
         else:
             target_lang = channel_languages[channel]
-            translation = translator(target_lang, "has been kicked by", name, channel)
+            translation = translator(source_lang, target_lang, "has been kicked by", name, channel)
             server.privmsg ( channel, name2 + " " + translation + " " + name)
 
 
@@ -246,7 +247,7 @@ def handleJoin ( connection, event ):
             pass
         else:
             target_lang = channel_languages [ channel ]
-            translation = translator(target_lang, "has joined:", name, channel)
+            translation = translator(source_lang, target_lang, "has joined:", name, channel)
             logging.info(translation)
             server.privmsg ( channel, name + ' ' + translation + ' ' + str ( event.target() ).lower()  )
 
