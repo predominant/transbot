@@ -12,14 +12,11 @@
 #according to the format: ".<lang_abbreviation>" for example: ".en" or ".es"
 ######################################################################
 
-# test test test
+import logging
 
-
-import irclib, urllib2, urllib, re, sys, os, codecs, getopt
+import irclib, urllib2, re, sys, os, getopt
 
 import simplejson
-
-from htmlentitydefs import name2codepoint
 
 irclib.DEBUG = True
 
@@ -27,6 +24,11 @@ irclib.DEBUG = True
 network = 'irc.freenode.net'
 port = 6667
 channel_languages = {}
+
+#configure logging
+logging.basicConfig(filename="transbot.log", 
+                    format="%(asctime)s: %(levelname)s: %(message)s",
+                    level=logging.DEBUG)
 
 # supported_languages
 # 'de' , 'zh' , 'en' , 'es' , 'fr' , 'ru' , 'pt' , 'ga' , 'hi' , 'he' , 'it' , 
@@ -87,27 +89,28 @@ def translator(target_lang, message, name, channel):
     url = 'http://ajax.googleapis.com/ajax/services/language/translate?v=1.0&q=' + urllib2.quote(message) + '&langpair=' + '%7C' + target_lang
     urlRetVal = urllib2.urlopen(url)
     json_obj = simplejson.load(urlRetVal)
+    logging.debug(json_obj)
+    
     #encode in utf-8
     line = json_obj['responseData'] ['translatedText']
     line = line.replace('\"', '')
     line = line.encode ( "utf-8 " )
    
-    print line 
+    logging.info(line) 
     return line
     
     
 #Generic echo handler (space added, then with no space), used to ouput initial info from server
 def handleEcho ( connection, event ):
-	print
-	print " ".join ( event.arguments() )
+	logging.debug(" ".join(event.arguments()))
 def handleNoSpace ( connection, event ):
-	print " ".join ( event.arguments() )
+	logging.debug(" ".join(event.arguments()))
 
 
 #handle private notices
 def handlePrivNotice ( connection, event ):
 	if event.source():
-		print ":: " + event.source() + " ->" + event.arguments() [ 0]
+		logging.debug(":: " + event.source() + " ->" + event.arguments() [0])
 	else:
 		print event.arguments() [ 0 ]
 
@@ -121,7 +124,17 @@ def handleInvite ( connection, event ):
 #handles private messages
 def handlePrivMessage (  connection, event ):
 	name = event.source().split ( '!' ) [ 0 ]
-	helpmessage =  [ 'transbot 0.1', "This program connects to user specified channels on irc.freenode.net and translates between languages on those channels. Users must specify the language on the channel before transbot will translate anything. Specification comes in the form of messaging the channel with a message of the form '.<language abbreviation>'. For example, english is '.en', spanish is '.es'. ", 'Languages supported are: ar - Arabic, de - German, en - English, es - Spanish, fr - French, ga - Irish, hi - Hindi, he - Hebrew, it - Italian, ja - Japanese, ko - Korean, la - Latin, pt - Portugese, ro - Romanian, ru - Russian, sl - Slovenian, sr - Serbian, sv - Swedish, tr - Turkish, zh - Chinese' ]
+	helpmessage =  [ 'transbot 0.1', "This program connects to user" +
+    " specified channels on irc.freenode.net and translates between" +
+    " languages on those channels. Users must specify the language on the" +
+    " channel before transbot will translate anything. Specification comes" +
+    " in the form of messaging the channel with a message of the form" +
+    " '.<language abbreviation>'. For example, english is '.en', spanish is" +
+    " '.es'. ", 'Languages supported are: ar - Arabic, de - German, en -' +
+    ' English, es - Spanish, fr - French, ga - Irish, hi - Hindi, he -' +
+    ' Hebrew, it - Italian, ja - Japanese, ko - Korean, la - Latin, pt -' +
+    ' Portugese, ro - Romanian, ru - Russian, sl - Slovenian, sr - Serbian,' +
+    ' sv - Swedish, tr - Turkish, zh - Chinese' ]
 	for line in range ( len ( helpmessage ) ):	
 		server.privmsg ( name , helpmessage [ line ] )
 
