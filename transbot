@@ -87,21 +87,15 @@ def translator(target_lang, message, name, channel):
     url = 'http://ajax.googleapis.com/ajax/services/language/translate?v=1.0&q=' + urllib2.quote(message) + '&langpair=' + '%7C' + target_lang
     urlRetVal = urllib2.urlopen(url)
     json_obj = simplejson.load(urlRetVal)
-    #encode in utf-8 rather than ascii
+    #encode in utf-8
     line = json_obj['responseData'] ['translatedText']
     line = line.replace('\"', '')
-    line = unicode ( line, "utf-8" )
     line = line.encode ( "utf-8 " )
-    _entity_re = re.compile(r'&(?:(#)(\d+)|([^;]+));') 
-    def _repl_func(match):
-        if match.group(1): # Numeric character reference
-            return unichr(int(match.group(2)))
-        else:
-            return unichr(name2codepoint[match.group])
-    print _entity_re.sub (_repl_func, line ) 
-    return _entity_re.sub ( _repl_func, line )
-
-
+   
+    print line 
+    return line
+    
+    
 #Generic echo handler (space added, then with no space), used to ouput initial info from server
 def handleEcho ( connection, event ):
 	print
