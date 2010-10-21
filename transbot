@@ -112,7 +112,7 @@ def handlePrivNotice ( connection, event ):
 	if event.source():
 		logging.debug(":: " + event.source() + " ->" + event.arguments() [0])
 	else:
-		print event.arguments() [ 0 ]
+		logging.dedug(event.arguments()[0])
 
 
 #auto-joins to invited channels
@@ -141,117 +141,123 @@ def handlePrivMessage (  connection, event ):
 
 #handles public messages
 def handlePubMessage ( connection, event ):
-	seeker = re.compile ( '^\.[a-zA-Z]{2}$' )
-	source_lang = channel_languages [ str ( event.target() ).lower()  ] 
-	message = event.arguments() [ 0 ]
-	name = event.source().split( '!' ) [ 0 ] 
-	if name.strip ( '0123456789' ) == 'transbot':
-		return
+    seeker = re.compile ( '^\.[a-zA-Z]{2}$' )
+    source_lang = channel_languages [ str ( event.target() ).lower()  ] 
+    message = event.arguments() [ 0 ]
+    logging.info(message)
+    name = event.source().split( '!' ) [ 0 ] 
+    if name.strip ( '0123456789' ) == 'transbot':
+        return
     # this seems to be a command to set the language of a channel    
-	if bool ( seeker.search ( message ) ):
-		message = message.strip ( '.' )
-		channel_languages [ str ( event.target() ).lower()  ] = message; return
-	for channel in channel_languages.keys():
-		if channel_languages [ channel ] == source_lang:
-			pass
-		else:
-			target_lang = channel_languages [ channel ]
-			line = translator(target_lang, message, name, channel)
-			server.privmsg(channel, name +  "> " + line)
+    if bool ( seeker.search ( message ) ):
+        message = message.strip ( '.' )
+        channel_languages [ str ( event.target() ).lower()  ] = message; return
+    for channel in channel_languages.keys():
+        if channel_languages [ channel ] == source_lang:
+            pass
+        else:
+            target_lang = channel_languages [ channel ]
+            line = translator(target_lang, message, name, channel)
+            server.privmsg(channel, name +  "> " + line)
 
 
 #handles topic changes
 def handleTopic ( connection, event ):
-	name = event.source().split ( "!" ) [ 0 ]
-	source_lang = channel_languages [ str ( event.target() ).lower()  ] 
-	message = event.arguments() [ 0 ] 
-	for channel in channel_languages.keys():
-		if channel_languages[channel] == source_lang:
-			pass
-		else:
-			target_lang = channel_languages[channel]
-			translation = translator(target_lang, "has set mode:" + message, name, channel)
-			server.privmsg ( channel, name + " " + translation )
+    name = event.source().split ( "!" ) [ 0 ]
+    source_lang = channel_languages [ str ( event.target() ).lower()  ] 
+    message = event.arguments() [ 0 ]
+    logging.info(message)    
+    for channel in channel_languages.keys():
+        if channel_languages[channel] == source_lang:
+            pass
+        else:
+            target_lang = channel_languages[channel]
+            translation = translator(target_lang, "has set mode:" + message, name, channel)
+            server.privmsg ( channel, name + " " + translation )
 
 
 #handles mode changes
 def handleMode ( connection, event ):
-	name = event.source().split ( "!" ) [ 0 ]
-	source_lang = channel_languages [ str ( event.target() ).lower()  ] 
-	message = event.arguments() [ 0 ] 
-	for channel in channel_languages.keys():
-		if channel_languages [ channel ] == source_lang:
-			pass
-		else:
-			target_lang = channel_languages [ channel ]
-			translation = translator(target_lang, "has set mode:" + message, name, channel)
-			if len ( event.arguments() ) < 2:
-				server.privmsg ( channel, name + " " + translation)
-			else:
-				name2 = events.arguments() [ 1 ]
-				server.privmsg ( channel, name + " " + translation.split( "has set " ) [ 0 ] + name2 + "'s" + translation.split( "has set" ) [ 1 ] )
+    name = event.source().split ( "!" ) [ 0 ]
+    source_lang = channel_languages [ str ( event.target() ).lower()  ] 
+    message = event.arguments() [ 0 ] 
+    logging.info(message)
+    for channel in channel_languages.keys():
+        if channel_languages [ channel ] == source_lang:
+            pass
+        else:
+            target_lang = channel_languages [ channel ]
+            translation = translator(target_lang, "has set mode:" + message, name, channel)
+            if len ( event.arguments() ) < 2:
+                server.privmsg ( channel, name + " " + translation)
+            else:
+                name2 = events.arguments() [ 1 ]
+                server.privmsg ( channel, name + " " + translation.split( "has set " ) [ 0 ] + name2 + "'s" + translation.split( "has set" ) [ 1 ] )
 
 
 #handles Parts
 def handlePart ( connection, event ):
-	name = event.source().split ( "!" ) [ 0 ]
-	source_lang = channel_languages [ str ( event.target() ).lower()  ] 
-	for channel in channel_languages.keys():
-		if channel_languages[channel] == source_lang:
-			pass
-		else:
-			target_lang = channel_languages[channel]
-			translation = translator(target_lang, "has quit", name, channel)
-			server.privmsg ( channel, name + " " + translation + " " + str ( event.target() ).lower()  )
+    name = event.source().split ( "!" ) [ 0 ]
+    source_lang = channel_languages [ str ( event.target() ).lower()  ] 
+    for channel in channel_languages.keys():
+        if channel_languages[channel] == source_lang:
+            pass
+        else:
+            target_lang = channel_languages[channel]
+            translation = translator(target_lang, "has quit", name, channel)
+            logging.info(translation)
+            server.privmsg ( channel, name + " " + translation + " " + str ( event.target() ).lower()  )
 
 
 #handles quits
 def handleQuit ( connection, event ):
-	name = event.source().split ( "!" ) [ 0 ]
-	for channel in channel_languages.keys():
-		target_lang = channel_languages [ channel ]
-		translation = translator( target_lang, "has disconnected", name, channel)
-		server.privmsg ( channel, name + " " + translation )
-	
+    name = event.source().split ( "!" ) [ 0 ]
+    for channel in channel_languages.keys():
+        target_lang = channel_languages [ channel ]
+        translation = translator( target_lang, "has disconnected", name, channel)
+        logging.info(translation)
+        server.privmsg ( channel, name + " " + translation )
+
 	
 #handles kicks
 def handleKick ( connection, event ):
-	name = event.source().split ( "!" ) [ 0 ]
-	name2 = event.arguments() [ 0 ]
-	source_lang = channel_languages [ str ( event.target() ).lower()  ] 
-	for channel in channel_languages.keys():
-		if channel_languages[channel] == source_lang:
-			pass
-		else:
-			target_lang = channel_languages[channel]
-			translation = translator(target_lang, "has been kicked by", name, channel)
-			server.privmsg ( channel, name2 + " " + translation + " " + name)
+    name = event.source().split ( "!" ) [ 0 ]
+    name2 = event.arguments() [ 0 ]
+    source_lang = channel_languages [ str ( event.target() ).lower()  ] 
+    for channel in channel_languages.keys():
+        if channel_languages[channel] == source_lang:
+            pass
+        else:
+            target_lang = channel_languages[channel]
+            translation = translator(target_lang, "has been kicked by", name, channel)
+            server.privmsg ( channel, name2 + " " + translation + " " + name)
 
 
 #handle channel joins
 def handleJoin ( connection, event ):
-	#the source needs to be split into just the name
-	#it comes in the format nickname!user@host
-	name = event.source().split ( "!" ) [ 0 ] 
-	if name.strip ( '0123456789' ) == "transbot":
-		return
-	source_lang = channel_languages [ str ( event.target() ).lower()  ] 
-	for channel in channel_languages.keys():
-		if channel_languages [ channel ] == source_lang:
-			pass
-		else:
-			target_lang = channel_languages [ channel ]
-			translation = translator(target_lang, "has joined:", name, channel)
-			server.privmsg ( channel, name + ' ' + translation + ' ' + str ( event.target() ).lower()  )
+    #the source needs to be split into just the name
+    #it comes in the format nickname!user@host
+    name = event.source().split ( "!" ) [ 0 ] 
+    if name.strip ( '0123456789' ) == "transbot":
+        return
+    source_lang = channel_languages [ str ( event.target() ).lower()  ] 
+    for channel in channel_languages.keys():
+        if channel_languages [ channel ] == source_lang:
+            pass
+        else:
+            target_lang = channel_languages [ channel ]
+            translation = translator(target_lang, "has joined:", name, channel)
+            logging.info(translation)
+            server.privmsg ( channel, name + ' ' + translation + ' ' + str ( event.target() ).lower()  )
 
 #handler for a pre-registed nick
 def handleNoNick (connection, event):
-	global nick, server
-	instance = int ( nick.strip ( 'transbot' ) )
-	instance += 1
-	nick2 = 'transbot' + str ( instance )
-	server = server_object ( network, nick2, name, port, ircname = name )
-	return server
+    global nick, server
+    instance = int ( nick.strip ( 'transbot' ) )
+    instance += 1
+    nick2 = 'transbot' + str ( instance )
+    server = server_object ( network, nick2, name, port, ircname = name )
+    return server
 #create an irc object
 irc = irclib.IRC()
 
