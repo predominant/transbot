@@ -14,9 +14,11 @@
 
 import logging
 
-import irclib, urllib2, re, sys, os, getopt
+import irclib, urllib2, re, sys, os
 
 import simplejson
+
+from optparse import OptionParser
 
 irclib.DEBUG = True
 
@@ -40,46 +42,69 @@ logging.basicConfig(filename="transbot.log",
 # channels: #<channel-name> <two char language identifier>, etc...
 # port: <port #>
 
-try:
-	conf_size = os.path.getsize ( 'transbot.conf' )
-except:
-	conf_size = 0
-if conf_size is not 0:
-	conf_file = open ( 'transbot.conf' )
-    # grab the network name
-	network = conf_file.readline().split ( ':' ) [ 1 ]
-	network = network.strip ()
-	channel_list = conf_file.readline().split ( ':' ) [ 1 ].lower()
-	chans = channel_list.split ( ',' )
-	for channel in chans:
-		channel_languages [ channel.split() [ 0 ] ] = channel.split() [ 1 ]
-	port = int ( conf_file.readline().split ( ':' ) [ 1 ] )
-	conf_file.close()
 
-#hanndles command args
-#handles help, save, remove
-try:
-	opts, args = getopt.getopt(sys.argv[1:],
-				      "hs:r:",["help","save=","remove="])
-except getopt.Getopterror:
-	print "usage:"
-	System.exit(2)
 
-for opt,arg in opts:
-	if opt in ("-h","--help"):
-		print 'help message'
-		#print help message
-	elif opt in ("-s","--save"):
-		#saves a default channel
-		print 'handle saving channels'	
-	elif opt in ("-r","--remove"):
-		#removes a default channel
-		print 'handle removing default channels'
+def save_channels(save_list):
+	try:
+		temp = open('~transbot.conf','w')
+		keyword = 'channels:'
+		toAdd = save_list.split(',')
+		
+		with open("transbot.conf",'r') as f:
+			for line in f:
+				if keyword in line:
+					for channel in toAdd:
+						pair = channel.split(':')
+						temp.write(line.rstrip())
+						temp.write(", #"+pair[0]+" "+
+							   pair[1]+"\n")
+						
+				else:
+					temp.write(line)
+		os.rename("~transbot.conf","transbot.conf")
+	except Exception as inst:
+		print "in save"
+		print type(inst)
+		print inst
+		os._exit(2)
+		#create_config()
+		#save_channels(save_list)
 
-for arg in args:
-	arg = arg.split(':')
-	channel_languages ['#'+arg[0].lower()] = arg[1]
 
+def remove_channels(remove_list):
+	try:
+		temp = open('~transbot.conf','w')
+		keyword = 'channels:'
+		toRemove = remove_list.split(',')
+		
+		with open("transbot.conf",'r') as f:
+			first = True
+			for line in f:
+				if keyword in line:
+					channels = line.split(':')[1]
+					channels = channels.split(',')
+					temp.write("channels: ")
+					for channel in channels:
+						channel=channel.strip()
+						pair = channel.split()
+						if pair[0][1:] in toRemove:
+							pass
+						elif first:
+							temp.write(channel)
+							first = False
+						else:
+							temp.write(", "+channel)
+					temp.write('\n')
+				else:
+					temp.write(line)
+		os.rename("~transbot.conf","transbot.conf")
+	except Exception as inst:
+		print "in remove"
+		print type(inst)
+		print inst
+		os._exit(2)	
+							
+							
 nick = 'transbot0'
 name = 'transbot Test'
 quote_string_re = re.compile(r'(".*?")')
@@ -300,6 +325,49 @@ def server_object ( network, nick, name, port, ircname ):
 	for channel in channel_languages.keys():
 		server.join ( channel)
 	return server
+
+
+#hanndles command args
+#handles help, save, remove
+
+parser = OptionParser()
+parser.add_option("-s","--save",help="Saves a list of channels as default."+  
+		  "Uses form -s channel1:es,channel2:es...",dest="save")
+parser.add_option("-r","--remove",help="Removes a list of channels as"+
+		  "default. Uses form -r channel1:es,channel2:es...",dest="remove")
+
+(options,args)=parser.parse_args()
+	
+if options.save is not None:
+	save_channels(options.save)
+if options.remove is not None:
+	remove_channels(options.remove)
+	
+	for arg in args:
+		arg = arg.split(':')
+		channel_languages ['#'+arg[0].lower()] = arg[1]
+
+try:
+	conf_size = os.path.getsize ( 'transbot.conf' )
+except:
+	conf_size = 0
+if conf_size is not 0:
+	conf_file = open ( 'transbot.conf' )
+    # grab the network name
+	network = conf_file.readline().split ( ':' ) [ 1 ]
+	network = network.strip ()
+	channel_list = conf_file.readline().split ( ':' ) [ 1 ].lower()
+	chans = channel_list.split ( ',' )
+	for channel in chans:
+		channel_languages [ channel.split() [ 0 ] ] = channel.split() [ 1 ]
+	port = int ( conf_file.readline().split ( ':' ) [ 1 ] )
+	conf_file.close()
+
+#hanndles command args
+
+for arg in args:
+	arg = arg.split(':')
+	channel_languages ['#'+arg[0].lower()] = arg[1]
 
 server = server_object ( network, nick, name, port, ircname = name )
 
