@@ -50,17 +50,18 @@ def save_channels(save_list):
 		keyword = 'channels:'
 		toAdd = save_list.split(',')
 		
-		with open("transbot.conf",'r') as f:
-			for line in f:
-				if keyword in line:
-					for channel in toAdd:
-						pair = channel.split(':')
-						temp.write(line.rstrip())
-						temp.write(", #"+pair[0]+" "+
-							   pair[1]+"\n")
+		f = open("transbot.conf",'r')
+		#with open("transbot.conf",'r') as f:
+		for line in f:
+			if keyword in line:
+				for channel in toAdd:
+					pair = channel.split(':')
+					temp.write(line.rstrip())
+					temp.write(", #"+pair[0]+" "+
+						   pair[1]+"\n")
 						
-				else:
-					temp.write(line)
+			else:
+				temp.write(line)
 		os.rename("~transbot.conf","transbot.conf")
 	except Exception as inst:
 		print "in save"
