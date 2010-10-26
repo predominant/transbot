@@ -63,10 +63,8 @@ def save_channels(save_list):
 			else:
 				temp.write(line)
 		os.rename("~transbot.conf","transbot.conf")
-	except Exception as inst:
-		print "in save"
-		print type(inst)
-		print inst
+	except Exception:
+		print "Error opening file 'transbot.conf'"
 		os._exit(2)
 		#create_config()
 		#save_channels(save_list)
@@ -99,10 +97,8 @@ def remove_channels(remove_list):
 				else:
 					temp.write(line)
 		os.rename("~transbot.conf","transbot.conf")
-	except Exception as inst:
-		print "in remove"
-		print type(inst)
-		print inst
+	except Exception:
+		print "Error opening file 'transbot.conf'"
 		os._exit(2)	
 							
 							
