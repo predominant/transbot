@@ -121,6 +121,11 @@ def translator(source_lang, target_lang, message, name, channel):
     line = json_obj['responseData'] ['translatedText']
     line = line.replace('\"', '')
     line = line.encode ( "utf-8 " )
+    
+     p = htmllib.HTMLParser(None)
+     p.save_bgn()
+     p.feed(line)
+	 line = p.save_end()
    
     logging.info(line) 
     return line
@@ -240,7 +245,7 @@ def handleQuit ( connection, event ):
     name = event.source().split ( "!" ) [ 0 ]
     for channel in channel_languages.keys():
         target_lang = channel_languages [ channel ]
-        translation = translator(source_lang, target_lang, "has disconnected", name, channel)
+        translation = translator("", target_lang, "has disconnected", name, channel)
         logging.info(translation)
         server.privmsg ( channel, name + " " + translation )
 
