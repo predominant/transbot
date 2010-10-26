@@ -63,6 +63,7 @@ def save_channels(save_list):
 			else:
 				temp.write(line)
 		os.rename("~transbot.conf","transbot.conf")
+		f.close()
 	except Exception:
 		print "Error opening file 'transbot.conf'"
 		os._exit(2)
@@ -76,27 +77,29 @@ def remove_channels(remove_list):
 		keyword = 'channels:'
 		toRemove = remove_list.split(',')
 		
-		with open("transbot.conf",'r') as f:
-			first = True
-			for line in f:
-				if keyword in line:
-					channels = line.split(':')[1]
-					channels = channels.split(',')
-					temp.write("channels: ")
-					for channel in channels:
-						channel=channel.strip()
-						pair = channel.split()
-						if pair[0][1:] in toRemove:
-							pass
-						elif first:
-							temp.write(channel)
-							first = False
-						else:
-							temp.write(", "+channel)
-					temp.write('\n')
-				else:
-					temp.write(line)
+		f = open("transbot.conf",'r')
+		#with open("transbot.conf",'r') as f:
+		first = True
+		for line in f:
+			if keyword in line:
+				channels = line.split(':')[1]
+				channels = channels.split(',')
+				temp.write("channels: ")
+				for channel in channels:
+					channel=channel.strip()
+					pair = channel.split()
+					if pair[0][1:] in toRemove:
+						pass
+					elif first:
+						temp.write(channel)
+						first = False
+					else:
+						temp.write(", "+channel)
+				temp.write('\n')
+			else:
+				temp.write(line)
 		os.rename("~transbot.conf","transbot.conf")
+		f.close()
 	except Exception:
 		print "Error opening file 'transbot.conf'"
 		os._exit(2)	
@@ -214,7 +217,7 @@ def handleMode ( connection, event ):
             if len ( event.arguments() ) < 2:
                 server.privmsg ( channel, name + " " + translation)
             else:
-                name2 = events.arguments() [ 1 ]
+                name2 = event.arguments() [ 1 ]
                 server.privmsg ( channel, name + " " + translation.split( "has set " ) [ 0 ] + name2 + "'s" + translation.split( "has set" ) [ 1 ] )
 
 
