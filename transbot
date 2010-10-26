@@ -122,11 +122,6 @@ def translator(source_lang, target_lang, message, name, channel):
     line = line.replace('\"', '')
     line = line.encode ( "utf-8 " )
     
-     p = htmllib.HTMLParser(None)
-     p.save_bgn()
-     p.feed(line)
-	 line = p.save_end()
-   
     logging.info(line) 
     return line
     
