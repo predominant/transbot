@@ -126,6 +126,12 @@ def translator(source_lang, target_lang, message, name, channel):
     return line
     
     
+def handleEndWelcome ( connection, event ):
+	logging.debug(" Welcome messages recieved. Joining channels...")
+	for channel in channel_languages.keys():
+		server.join ( channel )
+	
+
 #Generic echo handler (space added, then with no space), used to ouput initial info from server
 def handleEcho ( connection, event ):
 	logging.debug(" ".join(event.arguments()))
@@ -312,7 +318,8 @@ irc.add_global_handler ( 'luserconns', handleEcho ) # Record client count
 irc.add_global_handler ( 'luserunknown', handleEcho ) # Unknown connections
 irc.add_global_handler ( 'motdstart', handleEcho ) # Message of the day ( start )
 irc.add_global_handler ( 'motd', handleNoSpace ) # Message of the day
-irc.add_global_handler ( 'edofmotd', handleEcho ) # Message of the day ( end )
+irc.add_global_handler ( 'endofmotd', handleEndWelcome ) # Message of the day ( end )
+irc.add_global_handler ( 'nomotd', handleEndWelcome ) # Missing Message of the day
 irc.add_global_handler ( 'join', handleJoin ) # Channel join
 irc.add_global_handler ( 'namreply', handleNoSpace ) # Channel name list
 irc.add_global_handler ( 'endofnames', handleNoSpace ) # Channel name list ( end )
@@ -322,8 +329,6 @@ irc.add_global_handler ( 'nicknameinuse', handleNoNick ) #handles pre-registered
 def server_object ( network, nick, name, port, ircname ):
 	server = irc.server()
 	server.connect ( network, port, nick, ircname )
-	for channel in channel_languages.keys():
-		server.join ( channel)
 	return server
 
 
